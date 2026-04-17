@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "sample-fastapi-app"
+version = "0.1.0"
+description = "Sample FastAPI app for Docker CI/CD"
+authors = ["Sudheer"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "*"
+uvicorn = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"

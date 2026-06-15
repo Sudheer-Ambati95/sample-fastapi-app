@@ -9,6 +9,10 @@ pull_request:
 branches:
 - main
 
+permissions:
+id-token: write
+contents: read
+
 jobs:
 
 test:
@@ -43,10 +47,9 @@ steps:
 
 checkov:
 needs: test
-
-```
 runs-on: ubuntu-latest
 
+```
 steps:
   - name: Checkout Repository
     uses: actions/checkout@v4
@@ -60,10 +63,9 @@ steps:
 
 docker:
 needs: checkov
-
-```
 runs-on: ubuntu-latest
 
+```
 steps:
   - name: Checkout Repository
     uses: actions/checkout@v4
@@ -77,6 +79,40 @@ steps:
     with:
       image-ref: sample-fastapi-app:${{ github.sha }}
       format: table
-      exit-code: 1
+      exit-code: "1"
       severity: CRITICAL,HIGH
+```
+
+ecr-push:
+needs: docker
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
+
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v4
+    with:
+      role-to-assume: arn:aws:iam::179503922299:role/github-actions-role
+      aws-region: us-east-1
+
+  - name: Login to Amazon ECR
+    id: login-ecr
+    uses: aws-actions/amazon-ecr-login@v2
+
+  - name: Build Docker Image
+    run: |
+      docker build -t sample-fastapi-app:${{ github.sha }} .
+
+  - name: Tag Docker Image
+    run: |
+      docker tag sample-fastapi-app:${{ github.sha }} \
+      179503922299.dkr.ecr.us-east-1.amazonaws.com/sample-fastapi-app:${{ github.sha }}
+
+  - name: Push Docker Image
+    run: |
+      docker push \
+      179503922299.dkr.ecr.us-east-1.amazonaws.com/sample-fastapi-app:${{ github.sha }}
 ```

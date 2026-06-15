@@ -1,13 +1,22 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.routers.health import router
+from app.middleware.correlation import CorrelationIdMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
+
+app = FastAPI(
+    title="Sample FastAPI App"
+)
+
+app.add_middleware(CorrelationIdMiddleware)
+
+app.include_router(router)
 
 
 @app.get("/")
-def read_root():
-    return {"message": "FastAPI running successfully"}
+def root():
+    return {
+        "message": "FastAPI Application Running"
+    }
 
-
-@app.get("/health")
-def health_check():
-    return {"status": "healthy"}
+Instrumentator().instrument(app).expose(app)

@@ -16,10 +16,12 @@ contents: read
 jobs:
 
 test:
-runs-on: ubuntu-latest
 
 ```
+runs-on: ubuntu-latest
+
 steps:
+
   - name: Checkout Repository
     uses: actions/checkout@v4
 
@@ -46,11 +48,14 @@ steps:
 ```
 
 checkov:
-needs: test
-runs-on: ubuntu-latest
 
 ```
+needs: test
+
+runs-on: ubuntu-latest
+
 steps:
+
   - name: Checkout Repository
     uses: actions/checkout@v4
 
@@ -62,11 +67,14 @@ steps:
 ```
 
 docker:
-needs: checkov
-runs-on: ubuntu-latest
 
 ```
+needs: checkov
+
+runs-on: ubuntu-latest
+
 steps:
+
   - name: Checkout Repository
     uses: actions/checkout@v4
 
@@ -84,11 +92,14 @@ steps:
 ```
 
 ecr-push:
-needs: docker
-runs-on: ubuntu-latest
 
 ```
+needs: docker
+
+runs-on: ubuntu-latest
+
 steps:
+
   - name: Checkout Repository
     uses: actions/checkout@v4
 
